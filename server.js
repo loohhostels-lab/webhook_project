@@ -34,9 +34,12 @@ app.post("/webhook", async (req, res) => {
 
     if (!message) return res.sendStatus(200);
 
-    const userNumber = message.from;
+    const rawNumber  = message.from;
+    const userNumber = "+" + rawNumber;
     const text = message.text?.body || "";
     const type = message.type;
+
+    
 
     // ✅ Get user from Supabase
     const { data: user, error: userError } = await supabase
