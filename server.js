@@ -38,24 +38,37 @@ app.post("/webhook", async (req, res) => {
     const text = message.text?.body || "";
     const type = message.type;
 
+    // ✅ Get user from Supabase
+    const { data: user, error: userError } = await supabase
+      .from("hostel_user")
+      .select("user_name")
+      .eq("user_number", userNumber)
+      .maybeSingle();
+
+    if (userError) {
+      console.log("User Fetch Error:", userError.message);
+    }
+
+    // ✅ Insert message with fetched name
     const { error } = await supabase
       .from("messages")
       .insert([
         {
           user_number: userNumber,
           message: text,
-          type: type
+          type: type,
+          name: user?.name ?? "Unknown" // fallback
         }
       ]);
 
     if (error) {
-      console.log("Supabase Error:", error.message);
+      console.log("Insert Error:", error.message);
     } else {
       console.log("Message saved ✅");
     }
 
   } catch (err) {
-    console.log("Error:", err.message);
+    console.log("Server Error:", err.message);
   }
 
   res.sendStatus(200);
