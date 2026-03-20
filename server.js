@@ -18,7 +18,7 @@ const OPENAI_KEY = process.env.OPENAI_KEY;
 const WHATSAPP_TOKEN = process.env.WHATSAPP_TOKEN;
 const PHONE_NUMBER_ID = process.env.PHONE_NUMBER_ID;
 
-/* ---------------- WEBHOOK VERIFY ---------------- */
+
 app.get("/webhook", (req, res) => {
   const mode = req.query["hub.mode"];
   const token = req.query["hub.verify_token"];
@@ -32,7 +32,7 @@ app.get("/webhook", (req, res) => {
   }
 });
 
-/* ---------------- MAIN WEBHOOK ---------------- */
+
 app.post("/webhook", async (req, res) => {
   const body = req.body;
 
@@ -54,7 +54,7 @@ app.post("/webhook", async (req, res) => {
 
     const userName = user['user_name'] || "Unknown";
 
-    /* ---------------- SAVE MESSAGE ---------------- */
+
     await supabase.from("messages").insert([
       {
         user_number: userNumber,
@@ -66,10 +66,10 @@ app.post("/webhook", async (req, res) => {
 
     console.log("Message saved ✅");
 
-    /* ---------------- AI RESPONSE ---------------- */
+
     const aiReply = await getAIResponse(text, userName);
 
-    /* ---------------- SEND WHATSAPP REPLY ---------------- */
+
     await sendWhatsAppMessage(userNumber, aiReply);
 
   } catch (err) {
@@ -79,7 +79,7 @@ app.post("/webhook", async (req, res) => {
   res.sendStatus(200);
 });
 
-/* ---------------- AI FUNCTION ---------------- */
+
 async function getAIResponse(userMessage, userName) {
   const response = await axios.post(
     "https://api.openai.com/v1/chat/completions",
@@ -115,7 +115,7 @@ Rules:
   return response.data.choices[0].message.content;
 }
 
-/* ---------------- SEND MESSAGE FUNCTION ---------------- */
+
 async function sendWhatsAppMessage(to, text) {
   try {
     await axios.post(
