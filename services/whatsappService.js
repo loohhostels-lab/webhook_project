@@ -4,6 +4,7 @@ dotenv.config();
 
 const  PHONE_NUMBER_ID = process.env.PHONE_NUMBER_ID
 const  WHATSAPP_TOKEN = process.env.WHATSAPP_TOKEN
+                                    
 
 export async function sendWhatsAppMessage(to, text) {
   try {
