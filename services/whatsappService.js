@@ -4,12 +4,15 @@
 
 
 
-  const WHATSAPP_TOKEN = process.env.WHATSAPP_TOKEN;
-  const PHONE_NUMBER_ID = process.env.PHONE_NUMBER_ID;
+
                                       
 
   export async function sendWhatsAppMessage(to, text) {
     try {
+
+        const WHATSAPP_TOKEN = process.env.WHATSAPP_TOKEN;
+        const PHONE_NUMBER_ID = process.env.PHONE_NUMBER_ID;
+      
       const url = `https://graph.facebook.com/v20.0/${PHONE_NUMBER_ID}/messages`;
 
       console.log("📤 Sending to URL:", url);
