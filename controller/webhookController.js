@@ -28,6 +28,33 @@ export const verifyWebhook = (req, res) => {
 // ✅ MAIN HANDLER
 export const handleWebhook = async (req, res) => {
   try {
+
+    // ✅ Delivery status updates handle karo (sent/delivered/read/failed)
+const statuses = req.body.entry?.[0]?.changes?.[0]?.value?.statuses;
+if (statuses && statuses.length > 0) {
+  for (const s of statuses) {
+    const errorObj = s?.errors?.[0];
+    console.log(`📌 WhatsApp Status: wamid=${s.id} status=${s.status} recipient=${s.recipient_id}`, errorObj ? `error=${JSON.stringify(errorObj)}` : "");
+
+    // Supabase me log karo
+    await supabase.from("whatsapp_status_log").insert({
+      wamid: s.id,
+      status: s.status,
+      recipient_id: s.recipient_id,
+      error_code: errorObj?.code?.toString() ?? null,
+      error_title: errorObj?.title ?? null,
+      error_message: errorObj?.message ?? errorObj?.error_data?.details ?? null,
+      raw: s,
+    });
+  }
+  return res.sendStatus(200);
+}
+
+// Existing message handling — bilkul same
+const message = req.body.entry?.[0]?.changes?.[0]?.value?.messages?.[0];
+if (!message) return res.sendStatus(200);
+
+    
     const message = req.body.entry?.[0]?.changes?.[0]?.value?.messages?.[0];
     if (!message) return res.sendStatus(200);
 
